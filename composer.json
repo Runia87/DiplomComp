@@ -1,0 +1,21 @@
+{
+    "require": {
+        "aura/sqlquery": "^3.0",
+        "nikic/fast-route": "^1.3",
+        "kint-php/kint": "^6.0",
+        "psr/container": "^2.0",
+        "php-di/php-di": "^7.0",
+        "league/plates": "^3.6",
+        "delight-im/auth": "^8.3",
+        "tamtamchik/simple-flash": "^3.0",
+        "eoghanobrien/php-simple-mail": "^1.7"
+    },
+
+    "autoload":{
+
+    "psr-4":{
+        "controllers\\":"controllers/",
+         "model\\": "model/"
+    }
+}
+}
