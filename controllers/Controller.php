@@ -1,14 +1,14 @@
 <?php
 namespace controllers;
-use controllers\QueryBuilder;
 use League\Plates\Engine;
 use Exception;
+use model\QueryBuilder;
 use Tamtamchik\SimpleFlash\Flash;
 use Delight\Auth\Auth;
 use SimpleMail;
 use PDO;
 
-class controller{
+class Controller{
 
     private $templates;
     private $auth;
@@ -24,7 +24,6 @@ class controller{
 
 public function index()
     {
-        
         if ($this->auth->isLoggedIn()) {
             $_SESSION['id_user'] = $this->auth->getUserId();
             $_SESSION['username'] = $this->auth->getUsername();
@@ -34,6 +33,7 @@ public function index()
 
     public function login()
     {
+        Flash::message('Посетить нас могут только зарегистрированные пользователи', 'error');
         echo $this->templates->render('login');
     }
 

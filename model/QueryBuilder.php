@@ -1,5 +1,5 @@
 <?php
-namespace controllers;
+namespace model;
 use Aura\SqlQuery\QueryFactory;
 use PDO;
 class QueryBuilder{

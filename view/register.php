@@ -1,11 +1,11 @@
 <?php $this->layout('layout', ['title' => 'Регистрация']) ?>
 <?php
-//echo flash()->display();
+echo flash()->display();
 ?>
 <div class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <form action="register" method="post">
+            <form action="/register" method="post">
                 <div class="form-group">
                     <label class="form-label" for="emailverify">Email</label>
                     <input type="email" id="emailverify" name="email" class="form-control" placeholder="Эл. адрес"

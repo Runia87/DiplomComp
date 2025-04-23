@@ -15,9 +15,9 @@
         <ul class="navbar-nav mr-auto">
         </ul>
         <ul class="navbar-nav ml-auto">
-            <?= $this->e($_SESSION['username'])?>
+            <?= ! empty($_SESSION['username']) ? $this->e($_SESSION['username']) : ''?>
             <?php
-            if ($_SESSION['id_user']): ?>
+            if (isset($_SESSION['id_user'])): ?>
                 <li class="nav-item">
                     <a class="nav-link" href="/logout">Выйти</a>
                 </li>

@@ -13,8 +13,8 @@ if( !session_id() ) @session_start();
 require '../vendor/autoload.php';
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions([
-    Engine::class => function(){
-        return new Engine('../views');
+    Engine::class => function() {
+        return new Engine('../view');
     },
     PDO::class => function(){
 $driver='mysql';
@@ -33,8 +33,11 @@ $container=$containerBuilder->build();
 
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/register', ['controllers\controller','index']);
-    $r->addRoute('GET', '/', ['\Controllers\HomeController', 'index']);
+    $r->addRoute('GET', '/', ['controllers\HomeController', 'index']);
+    $r->addRoute('GET', '/register', ['controllers\Controller','index']);
+    $r->addRoute('GET', '/login', ['controllers\Controller','login']);
+    $r->addRoute('POST', '/register', ['controllers\Controller','register']);
+    /*$r->addRoute('GET', '/', ['\Controllers\HomeController', 'index']);
     $r->addRoute('GET', '/create', ['\Controllers\StorePostController', 'index']);
     $r->addRoute('POST', '/store', ['\Controllers\StorePostController', 'store']);
    // $r->addRoute('GET', '/register', ['\Controllers\UserController', 'index']);
@@ -48,7 +51,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/delete/{id:\d+}', ['\Controllers\DeletePostController', 'delete']);
     $r->addRoute(['GET', 'POST'], '/update[/{id:\d+}]', ['\Controllers\EditPostController', 'update']);
     $r->addRoute('GET', '/{page}/{item:\d+}', ['\Controllers\HomeController', 'index']);
-    //$r->addRoute('GET', '/login', ['App\controllers\homeController','login']); 
+    //$r->addRoute('GET', '/login', ['App\controllers\homeController','login']); */
 });
 
 // Fetch method and URI from somewhere
@@ -62,7 +65,7 @@ $uri = rawurldecode($uri);
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
-        $templates = new Engine('../views');
+        $templates = new Engine('../view');
         echo $templates->render('404');
         break;
     case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
@@ -73,4 +76,3 @@ switch ($routeInfo[0]) {
         $container->call([$routeInfo[1][0], $routeInfo[1][1]], [$routeInfo[2]]);
         break;
     }
-    ?>
