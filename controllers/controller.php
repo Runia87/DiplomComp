@@ -24,18 +24,25 @@ class controller{
 
 public function index()
     {
-        
-        if ($this->auth->isLoggedIn()) {
-            $_SESSION['id_user'] = $this->auth->getUserId();
-            $_SESSION['username'] = $this->auth->getUsername();
-        }
+        // if ($this->auth->isLoggedIn()) {
+        //     $_SESSION['id_user'] = $this->auth->getUserId();
+        //     $_SESSION['username'] = $this->auth->getUsername();
+        // }
         echo $this->templates->render('register');
     }
 
     public function login()
     {
-        echo $this->templates->render('login');
+        Flash::message('Посетить нас могут только зарегистрированные пользователи', 'error');
+        echo $this->templates->render('/login');
     }
+
+
+    public function create_user()
+    {
+        echo $this->templates->render('/create_user');
+    }
+
 
 public function about(){
     
@@ -87,23 +94,25 @@ public function email_verification(){
 
 
 public function editUser(){
-    $id=$_POST['id'];
+//$db = new QueryBuilder();
+$id=$_POST['id'];
 $username=$_POST['username'];
 $job_title=$_POST['job_title'];
 $phone=$_POST['phone'];
 $address=$_POST['address'];
     
-        redirect_to("edit.php");
+echo $this->templates->render('edit'); 
        // get_user_by_id($id);
-        edit__info($id,$username,$job_title,$phone,$address);
-        set_flash_message("success","Профиль успешно обновлен!");
-        redirect_to("page_profile.php");
+        $this->db->edit__info($id,$username,$job_title,$phone,$address);
+        Flash::message('Профиль успешно обновлен!', 'success');
+    echo $this->templates->render('page_profile'); 
 }
 
 
 
 public function addUser(){
-    $email = $_POST['email'];
+//db = new QueryBuilder();
+$email = $_POST['email'];
 $password = $_POST['password'];
 $username=$_POST['username'];
 $job_title=$_POST['job_title'];
@@ -114,86 +123,82 @@ $address=$_POST['address'];
 $vk=$_POST['vk'];
 $telegram=$_POST['tg'];
 $instagram=$_POST['insta'];
-$is_free = get_user_by_email($email);
+$is_free = $this->db->getEmail('users', $email);
 if (!empty($is_free)) {
-    set_flash_message("danger","Эл.адрес уже занят");
-  //  display_flash_message("danger");
-    redirect_to("create_user.php");
-    
+    Flash::message('Эл.адрес уже занят', 'danger');
+    echo $this->templates->render('create_user'); 
 }
 else{
-    $id = add_user($email,$password);
-    edit_Information($id,$username,$job_title,$phone,$address);
-   set_status($id,$status);
-    upload_avatar($id,$image);
-    add_social_links($id,$telegram,$instagram,$vk);
-    set_flash_message("success","Регистрация успешна");
-    redirect_to("users.php");
-  //  display_flash_message("success");
-   
+    $id = $this->db->add_user($email,$password);
+    $this->db->edit_Information($id,$username,$job_title,$phone,$address);
+   $this->db->set_status($id,$status);
+    $this->db->upload_avatar($id,$image);
+    $this->db->add_social_links($id,$telegram,$instagram,$vk);
+    Flash::message('Пользователь успешно добавлен!', 'success');
+    echo $this->templates->render('users'); 
 }
 }
 
 public function changeStatus(){
-    $id=$_POST['id'];
+//$db = new QueryBuilder();
+$id=$_POST['id'];
 $status=$_POST['status'];
-
-set_status($id,$status);
-set_flash_message("success","Профиль успешно обновлен!");
-redirect_to("page_profile.php");
+$this->db->set_status($id,$status);
+Flash::message('Профиль успешно обновлен!', 'success');
+echo $this->templates->render('page_profile'); 
 }
 
 public function delete(){
-
-$authUser=login($_SESSION["login"],$_SESSION["password"]);
+$authUser=$this->db->login($_SESSION["login"],$_SESSION["password"]);
 $_SESSION['authUserId']=$authUser['id'];
 if(is_not_logged_in()){
-    redirect_to("page_login.php");
+    echo $this->templates->render('login'); 
     exit;
 }
 
 if(!is_admin($_SESSION['user']))
 {if(!is_author($_SESSION['authUserId'],$_GET['id'])){
-    set_flash_message("danger","Можно редактировать только свой профиль!");
-    redirect_to("users.php");
+    Flash::message('Можно редактировать только свой профиль!', 'danger');
+    echo $this->templates->render('users'); 
 }}
 
-$user = get_user_by_id($_GET['id']);
+$user = $this->db->getOne('users', $_GET['id']);
 $id=$user['id'];
 $_SESSION['id']=$_GET['id'];
 
-delete($id);
-set_flash_message("success","Пользователь удален!");
+$this->db->delete($id);
+Flash::message('Пользователь удален!', 'success');
 if($authUser['id']===$id){
-    redirect_to("page_register.php");  
+    echo $this->templates->render('register'); 
 }
 else{
     
-    redirect_to("users.php");
+    echo $this->templates->render('users'); 
 }
 }
 
 public function avatar(){
-    $id=$_POST['id'];
+//$db = new QueryBuilder();
+$id=$_POST['id'];
 $image=$_POST['image'];
-upload_avatar($id,$image);
-set_flash_message("success","Профиль успешно обновлен!");
-redirect_to("page_profile.php");
+$this->db->upload_avatar($id,$image);
+Flash::message('Профиль успешно обновлен!', 'success');
+echo $this->templates->render('page_profile'); 
 }
 
 public function changePass(){
-    $id=$_POST['id'];
+$id=$_POST['id'];
 $email=$_POST['email'];
 $password=$_POST['password'];
 $passwordConfir=$_POST['passwordConfir'];
 if($password===$passwordConfir){
-edit__credentials($id,$email,$password);
-set_flash_message("success","Профиль успешно обновлен!");
-redirect_to("page_profile.php");
+$this->db->edit__credentials($id,$email,$password);
+Flash::message('Профиль успешно обновлен!', 'success');
+echo $this->templates->render('page_profile'); 
 }
 else{
-    set_flash_message("danger","Пароли не совпадают!");
-redirect_to("security.php?id=$id");
+    Flash::message('Пароли не совпадают!', 'danger');
+    echo $this->templates->render('security?id=$id'); 
 
 }
 }
@@ -201,20 +206,20 @@ redirect_to("security.php?id=$id");
 public function register()
 {
     try {
-        $this->auth->register($_POST['email'], $_POST['password'], function ($selector, $token) {
+        $this->auth->register($_POST['email'], $_POST['password'], $_POST['username'],function ($selector, $token) {
 
             $verification = "<a href='".$_SERVER['HTTP_REFERER'] . '/verification/' . \urlencode($selector) . '/' . \urlencode($token)."'>Verificate your account</a>";
 
             SimpleMail::make()
-                ->setTo($_POST['email_user'], $_POST['name_user'])
-                ->setFrom('kupriyanov@awagas.group', 'sergei')
+                ->setTo($_POST['email'], $_POST['username'])
+                ->setFrom('runia87@mail.ru', 'runia87')
                 ->setSubject('Вы успешно зарегистрировались')
-                ->setMessage('Вы зарегистрировались на сайте Kup@develop, для подтверждения почты перейдите по '.$verification)
+                ->setMessage('Вы зарегистрировались на сайте Учебный проект, для подтверждения почты перейдите по '.$verification)
                 ->setHtml()
                 ->send();
         });
 
-        Flash::message('Вы успешно зарегистрировались, на Kup@develop, на ' .$_POST['email_user'] . ' отправлено письмо для подтверждения', 'success');
+        Flash::message('Вы успешно зарегистрировались, на Учебном проекте, на ' .$_POST['email'] . ' отправлено письмо для подтверждения', 'success');
         echo $this->templates->render('login');
     }
     catch (\Delight\Auth\InvalidEmailException $e) {
@@ -235,28 +240,19 @@ public function register()
     }
 }
 
-public function loginUser()
+public function users()
     {
-        try {
-            $this->auth->login($_POST['email'], $_POST['password']);
-            echo $this->templates->render('users');
-            //header('Location: /');
-        }
-        catch (\Delight\Auth\InvalidEmailException $e) {
-            echo $this->templates->render('login');
-            die('Wrong email address');
-        }
-        catch (\Delight\Auth\InvalidPasswordException $e) {
-            echo $this->templates->render('login');
-            die('Wrong password');
-        }
-        catch (\Delight\Auth\EmailNotVerifiedException $e) {
-            Flash::message('Невозможно войти Ваш Email не подтверждён', 'error');
-            header('Location: /');
-        }
-        catch (\Delight\Auth\TooManyRequestsException $e) {
-            die('Too many requests');
-        }
+        //echo $this->templates->render('/users');
+        //echo $this->db->getAll('users');
+       $db = new QueryBuilder();
+       //$db = new PDO('mysql:host=MySQL-8.0;dbname=OOP2',"root",""); 
+       // $auth = new Auth(\Delight\Auth\Auth($db));
+       // d($this->auth->getRoles()); die;
+$users=$db->getAll('users');
+// if ($auth->hasRole(\Delight\Auth\Role::admin)) {
+//     echo 'The user is admin';
+// }
+echo $this->templates->render('users', ['users' => $users]);
     }
    
     public function logout()
