@@ -6,7 +6,15 @@
     <meta name="description" content="Chartist.html">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, minimal-ui">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    
+    
+   
+    <link rel="stylesheet" media="screen, print" href="/css/fa-solid.css">
+    <link rel="stylesheet" media="screen, print" href="/css/fa-brands.css">
+    <link id="vendorsbundle" rel="stylesheet" media="screen, print" href="/css/vendors.bundle.css">
+    <link id="appbundle" rel="stylesheet" media="screen, print" href="/css/app.bundle.css">
+    <link id="myskin" rel="stylesheet" media="screen, print" href="/css/skins/skin-master.css">
+    <!--link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"-->
   </head>
   <body class="mod-bg-1 mod-nav-link">
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary bg-primary-gradient">
@@ -33,16 +41,16 @@
     <?=$this->section('content')?>
 
 
-    
-  </body>
-  <footer class="page-footer" role="contentinfo">
+    <footer class="page-footer" role="contentinfo">
     <div class="col input-group mb-3 d-flex justify-content-center">
         <span class="input-group-text justify-content-center">2025 © Учебный проект</span>
         
     </div>
-</footer>
-  <script src="../js/vendors.bundle.js"></script>
-    <script src="../js/app.bundle.js"></script>
+</footer> 
+  </body>
+  
+  <script src="/js/vendors.bundle.js"></script>
+    <script src="/js/app.bundle.js"></script>
     <script>
 
         $(document).ready(function()

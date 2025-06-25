@@ -146,7 +146,7 @@ echo flash()->display();
                                         </div>
                                     </div>
                                     <div class="col-md-12 mt-3 d-flex flex-row-reverse">
-                                        <button class="btn btn-success" action="addUser.php">Добавить</button>
+                                        <button class="btn btn-success" action="/addUser">Добавить</button>
                                     </div>
                                 </div>
                             </div>
@@ -157,17 +157,3 @@ echo flash()->display();
             </div>
         </form>
     </main>
-
-    <script src="js/vendors.bundle.js"></script>
-    <script src="js/app.bundle.js"></script>
-    <script>
-
-        $(document).ready(function()
-        {
-
-          
-        });
-
-    </script>
-</body>
-</html>
