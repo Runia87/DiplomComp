@@ -6,6 +6,10 @@ use DI\ContainerBuilder;
 use Delight\Auth\Auth;
 use Aura\SqlQuery\QueryFactory;
 use League\Plates\Engine;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 
 
@@ -41,11 +45,21 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('POST', '/create_user', ['\controllers\controller', 'create_user']);
     $r->addRoute('POST', '/addUser', ['\controllers\controller', 'addUser']);
     $r->addRoute('GET', '/login', ['controllers\controller','login']);
-    $r->addRoute('GET', '/profile', ['controllers\controller','page_profile']);
+    $r->addRoute('POST', '/profile', ['controllers\controller','editUser']);
+    $r->addRoute('GET', '/changePass', ['controllers\controller','changePass']);
+    $r->addRoute('POST', '/changePass', ['controllers\controller','changePass']);
+    $r->addRoute('GET', '/profile', ['controllers\controller','changePass']);
     $r->addRoute('GET', '/security', ['controllers\controller','security']);
+    $r->addRoute('GET', '/security/{id:\d+}', ['controllers\controller','security']);
     $r->addRoute('GET', '/edit', ['controllers\controller','edit']);
+    $r->addRoute('POST', '/edit', ['controllers\controller','editUser']);
     $r->addRoute('GET', '/status', ['controllers\controller','status']);
-    $r->addRoute('GET', '/media', ['controllers\controller','media']);
+    $r->addRoute('POST', '/changeStatus', ['\controllers\controller', 'changeStatus']);
+    $r->addRoute('GET', '/changeStatus', ['\controllers\controller', 'changeStatus']);
+    $r->addRoute('GET', '/imageEdit', ['controllers\controller','media']);
+    $r->addRoute('GET', '/delete', ['controllers\controller','delete']);
+    $r->addRoute('GET', '/page_profile', ['controllers\controller','page_profile']);
+    $r->addRoute('POST', '/avatar', ['controllers\controller','avatar']);
  //   $r->addRoute('GET', '/create', ['\Controllers\StorePostController', 'index']);  
   //  $r->addRoute('GET', '/', ['controllers\HomeController', 'index']);
    // $r->addRoute('POST', '/store', ['\Controllers\StorePostController', 'store']);
