@@ -1,5 +1,7 @@
 <?php
 namespace controllers;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Aura\SqlQuery\QueryFactory;
 use PDO;
 class QueryBuilder{
@@ -14,7 +16,7 @@ class QueryBuilder{
     }
 
     public function getAll(){
-        global $pdo;
+        //global $pdo;
         $select = $this->queryFactory->newSelect();
         $select->cols(['*'])
         ->from('users'); 
@@ -39,7 +41,7 @@ public function update($data,$id,$table){
     }
 
 public function delete($id){
-    global $pdo;
+    //global $pdo;
      $delete = $this->queryFactory->newDelete();
      $delete
     ->from('users')                   // FROM this table
@@ -102,12 +104,23 @@ public function getOne($table,$id){
              $sth->execute($insert->getBindValues());
             }
 
-    public function add_user($email,$password){
+    public function add_user($email,$password,$username,$job_title,$phone,$address,$status,$image,$telegram,$instagram,$vk){
     $data = [
         'email' => $email,
-        'password' => password_hash($password, PASSWORD_DEFAULT)
+        'password' => password_hash($password, PASSWORD_DEFAULT),
+        'username'=> $username,
+        'job_title'=> $job_title,
+        'phone'=> $phone,
+        'image'=>'img/demo/avatars/'.$image,
+        'address'=> $address,
+        'status'=> $status,
+        'telegram'=> $telegram,
+        'instagram'=> $instagram,
+        'vk'=> $vk
+
     ];   
-    global $pdo;
+    //DB::table('users')->insert(['image'=>$image->store('uploads')]);
+   // global $pdo;,
     $insert = $this->queryFactory->newInsert();
     $insert
     ->into('users')                   // INTO this table
@@ -116,21 +129,21 @@ public function getOne($table,$id){
      $sth->execute($insert->getBindValues());
 
 
-     $select2 = $this->queryFactory->newSelect();
-     $select2->cols(['id'])
-    ->from('users')
-    ->where('email = :email')
-    ->bindValue('email',$email);
-     $sth = $this->pdo->prepare($select2->getStatement());
-     $sth->execute($select2->getBindValues());
-     $result = $sth->fetch(PDO::FETCH_ASSOC);
-     return $result['id'];
+    //  $select2 = $this->queryFactory->newSelect();
+    //  $select2->cols(['id'])
+    // ->from('users')
+    // ->where('email = :email')
+    // ->bindValue('email',$email);
+    //  $sth = $this->pdo->prepare($select2->getStatement());
+    //  $sth->execute($select2->getBindValues());
+    //  $result = $sth->fetch(PDO::FETCH_ASSOC);
+    //  return $result['id'];
     
     }
 
     
     public function login($email,$password){
-        global $pdo;
+       // global $pdo;
         $select2 = $this->queryFactory->newSelect();
         $select2->cols(['id','email','roles','password'])
        ->from('users')
@@ -189,7 +202,7 @@ public function getOne($table,$id){
     }
     
     public function edit_Information($username,$job_title,$phone,$address,$id){
-    global $pdo;
+   // global $pdo;
     $data=[
         'username' => $username,
         'job_title' => $job_title,
@@ -208,13 +221,16 @@ public function getOne($table,$id){
     }
 
 
-    public function set_status($status,$id){
-    global $pdo;
+    public function set_status($id,$status){
+    //global $pdo;
+    $data=[
+        'status' => $status
+    ]; 
 
     $update = $this->queryFactory->newUpdate(); 
         $update
         ->table('users')                  // update this table
-        ->cols($status)
+        ->cols($data)
         ->where('id = :id')           // AND WHERE these conditions
         ->bindValue('id', $id);
         $sth = $this->pdo->prepare($update->getStatement());
@@ -223,24 +239,28 @@ public function getOne($table,$id){
 
     }
     
-    function upload_avatar($image,$id){
-        global $pdo;
-
+    public function upload_avatar($id,$image){
+        //global $pdo;
+        //$image = DB::table('users')->select('*')->where('id', $id)->first();
+        //Storage::delete($image->image);
+        //$filename=$newImage->store('uploads');
+        $data=[
+            'image' => 'img/demo/avatars/'.$image
+        ]; 
         $update = $this->queryFactory->newUpdate(); 
         $update
         ->table('users')                  // update this table
        // ->cols('img/demo/avatars/':$image)
-       ->cols($image)
+       ->cols($data)
         ->where('id = :id')           // AND WHERE these conditions
         ->bindValue('id', $id);
         $sth = $this->pdo->prepare($update->getStatement());
         $sth->execute($update->getBindValues());
-        $sth->fetch(PDO::FETCH_ASSOC);   
-    
+        $sth->fetch(PDO::FETCH_ASSOC); 
     }
     
     function add_social_links($telegram,$instagram,$vk,$id){
-    global $pdo;
+    //global $pdo;
 
     $update = $this->queryFactory->newUpdate(); 
     $update
@@ -264,13 +284,18 @@ public function getOne($table,$id){
     
     
     
-    function edit__info($username,$job_title,$phone,$address,$id){
-    global $pdo;
-         
+    function edit_info($id,$username,$job_title,$phone,$address){
+   // global $pdo;
+   $data=[
+    'username' => $username,
+    'job_title' => $job_title,
+    'phone' => $phone,
+    'address' => $address
+];      
     $update = $this->queryFactory->newUpdate(); 
     $update
     ->table('users')                  // update this table
-    ->cols($username,$job_title,$phone,$address)
+    ->cols($data)
     ->where('id = :id')           // AND WHERE these conditions
     ->bindValue('id', $id);
     $sth = $this->pdo->prepare($update->getStatement());
@@ -279,12 +304,16 @@ public function getOne($table,$id){
     
     }
     
-    function edit__credentials($email,$password,$id){
-    global $pdo;    
+    function edit_credentials($id,$email,$password){
+    //global $pdo; 
+    $data=[
+        'email' => $email,
+        'password' => $password
+    ];     
     $update = $this->queryFactory->newUpdate(); 
     $update
     ->table('users')                  // update this table
-    ->cols($email,$password)
+    ->cols($data)
     ->where('id = :id')           // AND WHERE these conditions
     ->bindValue('id', $id);
     $sth = $this->pdo->prepare($update->getStatement());
